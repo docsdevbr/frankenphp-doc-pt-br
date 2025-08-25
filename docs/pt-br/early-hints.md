@@ -7,7 +7,7 @@
 
 source_url: https://github.com/php/frankenphp/blob/main/docs/early-hints.md
 revision: dd6b33a35cc4a2a20f9dc6b5ba43475cad81af17
-status: review
+status: ready
 -->
 
 # Early Hints

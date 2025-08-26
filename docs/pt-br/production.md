@@ -7,7 +7,7 @@
 
 source_url: https://github.com/php/frankenphp/blob/main/docs/production.md
 revision: b2435183f4bda230db6cd60f2bc419bd51f3171c
-status: review
+status: ready
 -->
 
 # Implantando em produção
@@ -15,7 +15,7 @@ status: review
 Neste tutorial, aprenderemos como implantar uma aplicação PHP em um único
 servidor usando o Docker Compose.
 
-Se você estiver usando o Symfony, prefira ler a entrada de documentação
+Se você estiver usando o Symfony, leia a documentação
 [Implantar em produção](https://github.com/dunglas/symfony-docker/blob/main/docs/production.md)
 do projeto Docker do Symfony (que usa FrankenPHP).
 
@@ -35,6 +35,10 @@ ENV SERVER_NAME=seu-nome-de-dominio.example.com
 # Se quiser desabilitar o HTTPS, use este valor:
 #ENV SERVER_NAME=:80
 
+# Se o seu projeto não estiver usando o diretório "public" como diretório raiz,
+# você pode defini-lo aqui:
+# ENV SERVER_ROOT=web/
+
 # Habilita as configurações de produção do PHP
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
@@ -44,9 +48,9 @@ COPY . /app/public
 #COPY . /app
 ```
 
-Consulte [Criando uma imagem Docker personalizada](docker.md) para mais detalhes
-e opções, e para aprender como personalizar a configuração, instalar extensões
-PHP e módulos Caddy.
+Consulte [Construindo uma imagem Docker personalizada](docker.md) para mais
+detalhes e opções, e para aprender como personalizar a configuração, instalar
+extensões PHP e módulos Caddy.
 
 Se o seu projeto usa o Composer, certifique-se de incluí-lo na imagem Docker e
 instalar suas dependências.
@@ -88,7 +92,7 @@ Finalmente, se você usa Git, faça o commit e o push desses arquivos.
 
 Para implantar sua aplicação em produção, você precisa de um servidor.
 Neste tutorial, usaremos uma máquina virtual fornecida pela DigitalOcean, mas
-qualquer servidor Linux pode funcionar.
+qualquer servidor Linux pode ser usado.
 Se você já possui um servidor Linux com o Docker instalado, pode pular direto
 para [a próxima seção](#configurando-um-nome-de-domínio).
 
@@ -168,7 +172,7 @@ Acesse `https://seu-nome-de-dominio.example.com` e divirta-se!
 
 > [!CAUTION]
 >
-> O Docker pode ter uma camada de cache; certifique-se de ter a compilação
+> O Docker pode ter uma camada de cache; certifique-se de ter a construção
 > correta para cada implantação ou reconstrua seu projeto com a opção
 > `--no-cache` para evitar problemas de cache.
 

@@ -7,7 +7,7 @@
 
 source_url: https://github.com/php/frankenphp/blob/main/docs/x-sendfile.md
 revision: 5e1ad5d7976aaf15e35c903034f33bcec250961d
-status: review
+status: ready
 -->
 
 # Servindo arquivos estáticos grandes com eficiência (`X-Sendfile`/`X-Accel-Redirect`)
@@ -21,10 +21,10 @@ comparação com o uso direto do servidor web (sobrecarga de memória, desempenh
 reduzido...).
 
 O FrankenPHP permite delegar o envio de arquivos estáticos ao servidor web
-**após** a execução de código PHP personalizado.
+**após** a execução do código PHP personalizado.
 
-Para fazer isso, sua aplicação PHP precisa simplesmente definir um cabeçalho
-HTTP personalizado contendo o caminho do arquivo a ser servido.
+Para fazer isso, sua aplicação PHP só precisa definir um cabeçalho HTTP
+personalizado contendo o caminho do arquivo a ser servido.
 O FrankenPHP cuida do resto.
 
 Esse recurso é conhecido como **`X-Sendfile`** para Apache e

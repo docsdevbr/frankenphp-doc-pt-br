@@ -7,7 +7,7 @@
 
 source_url: https://github.com/php/frankenphp/blob/main/docs/known-issues.md
 revision: ac900e0df433d6f05df11eefe1e2ba88fa6dac5e
-status: review
+status: ready
 -->
 
 # Problemas conhecidos
@@ -18,7 +18,7 @@ As seguintes extensões são conhecidas por não serem compatíveis com o
 FrankenPHP:
 
 | Nome                                                                                                        | Motivo            | Alternativas                                                                                                         |
-|-------------------------------------------------------------------------------------------------------------|-------------------|----------------------------------------------------------------------------------------------------------------------|
+| ----------------------------------------------------------------------------------------------------------- | ----------------- | -------------------------------------------------------------------------------------------------------------------- |
 | [imap](https://www.php.net/manual/pt_BR/imap.installation.php)                                              | Não é thread-safe | [javanile/php-imap2](https://github.com/javanile/php-imap2), [webklex/php-imap](https://github.com/Webklex/php-imap) |
 | [newrelic](https://docs.newrelic.com/docs/apm/agents/php-agent/getting-started/introduction-new-relic-php/) | Não é thread-safe | -                                                                                                                    |
 
@@ -120,7 +120,7 @@ querer executar um binário PHP para algumas tarefas, por exemplo, em
 [um projeto Laravel](laravel.md) para executar
 `@php artisan package:discover --ansi`.
 Isso
-[atualmente falha](https://github.com/dunglas/frankenphp/issues/483#issuecomment-1899890915)
+[atualmente falha](https://github.com/php/frankenphp/issues/483#issuecomment-1899890915)
 por dois motivos:
 
 - O Composer não sabe como chamar o binário do FrankenPHP;
@@ -182,12 +182,12 @@ neste local.
 > Certifique-se de executar `openssl_get_cert_locations()` no contexto
 > apropriado.
 
-[Certificados CA extraídos do Mozilla podem ser baixados no site do curl](https://curl.se/docs/caextract.html).
+[Certificados CA extraídos do Mozilla podem ser baixados no site do cURL](https://curl.se/docs/caextract.html).
 
 Como alternativa, muitas distribuições, incluindo Debian, Ubuntu e Alpine,
 fornecem pacotes chamados `ca-certificates` que contêm esses certificados.
 
-Também é possível usar `SSL_CERT_FILE` e `SSL_CERT_DIR` para indicar ao OpenSSL
+Também é possível usar `SSL_CERT_FILE` e `SSL_CERT_DIR` para indicar à OpenSSL
 onde procurar certificados CA:
 
 ```console

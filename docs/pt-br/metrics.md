@@ -7,7 +7,7 @@
 
 source_url: https://github.com/php/frankenphp/blob/main/docs/metrics.md
 revision: ffa52f7c8d4c173b349baa885be98c7cc7b49c11
-status: review
+status: ready
 -->
 
 # Métricas

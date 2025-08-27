@@ -6,14 +6,14 @@
 [//]: # https://github.com/php/frankenphp/blob/main/LICENSE
 
 source_url: https://github.com/php/frankenphp/blob/main/docs/github-actions.md
-revision: 93859e314950241292bf197ac86718f701fa947c
-status: review
+revision: 555c613669823cf54067dbbb35d59599ded97d51
+status: ready
 -->
 
 # Usando GitHub Actions
 
-Este repositório constrói e implementa a imagem do Docker no
-[Docker Hub](https://hub.docker.com/r/dunglas/frankenphp) em cada pull request
+Este repositório constrói e implanta a imagem Docker no
+[Docker Hub](https://hub.docker.com/r/dunglas/frankenphp) a cada pull request
 aprovado ou em seu próprio fork após a configuração.
 
 ## Configurando GitHub Actions

@@ -90,8 +90,8 @@ RUN CGO_ENABLED=1 \
     CGO_LDFLAGS="$(php-config --ldflags) $(php-config --libs)" \
     xcaddy build \
         --output /usr/local/bin/frankenphp \
-        --with github.com/dunglas/frankenphp=./ \
-        --with github.com/dunglas/frankenphp/caddy=./caddy/ \
+        --with github.com/php/frankenphp=./ \
+        --with github.com/php/frankenphp/caddy=./caddy/ \
         --with github.com/dunglas/caddy-cbrotli \
         # Mercure e Vulcain estão incluídos na compilação oficial, mas sinta-se
         # à vontade para removê-los

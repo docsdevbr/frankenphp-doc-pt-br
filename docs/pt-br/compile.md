@@ -41,10 +41,10 @@ brew link --overwrite --force shivammathur/php/php-zts
 
 ### Compilando o PHP
 
-Alternativamente, você pode compilar o PHP a partir dos códigos-fonte com as
+Alternativamente, você pode compilar o PHP a partir do código-fonte com as
 opções necessárias para o FrankenPHP seguindo estes passos.
 
-Primeiro, [obtenha os códigos-fonte do PHP](https://www.php.net/downloads.php) e
+Primeiro, [obtenha o código-fonte do PHP](https://www.php.net/downloads.php) e
 extraia-os:
 
 ```console

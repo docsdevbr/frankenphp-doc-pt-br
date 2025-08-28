@@ -86,7 +86,7 @@ Em ambientes de produção, recomendamos o uso do FrankenPHP vinculado à `glibc
 
 Isso pode ser feito usando as imagens Docker do Debian (o padrão), baixando o
 binário com sufixo -gnu de nossos
-[Lançamentos](https://github.com/dunglas/frankenphp/releases) ou
+[Lançamentos](https://github.com/php/frankenphp/releases) ou
 [compilando o FrankenPHP a partir do código-fonte](compile.md).
 
 Como alternativa, fornecemos binários `musl` estáticos compilados com

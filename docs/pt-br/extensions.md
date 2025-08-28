@@ -51,7 +51,7 @@ também inclui uma **API de tipos pública** para ajudar você a escrever suas
 extensões em Go sem ter que se preocupar com **o malabarismo de tipos entre
 PHP/C e Go**.
 
-> [!DICA]
+> [!TIP]
 > Se quiser entender como as extensões podem ser escritas em Go do zero, leia a
 > seção de implementação manual abaixo, que demonstra como escrever uma extensão
 > PHP em Go sem usar o gerador.
@@ -162,8 +162,8 @@ Esta tabela resume o que você precisa saber:
 > Esta tabela ainda não é exaustiva e será completada à medida que a API de
 > tipos do FrankenPHP se tornar mais completa.
 >
-> Especificamente para métodos de classe, tipos primitivos e arrays são
-> suportados atualmente.
+> Tipos primitivos e arrays são suportados atualmente, especificamente para
+> métodos de classe.
 > Objetos ainda não podem ser usados como parâmetros de métodos ou tipos de
 > retorno.
 
@@ -181,7 +181,7 @@ O FrankenPHP oferece suporte nativo para arrays PHP por meio de
 `AssociativeArray` representa um
 [hashmap](https://en.wikipedia.org/wiki/Hash_table) composto por um campo
 `Map: map[string]any` e um campo opcional `Order: []string` (ao contrário dos
-"arrays associativos" do PHP, os mapas em Go não são ordenados).
+arrays associativos do PHP, os mapas em Go não são ordenados).
 
 Se a ordem ou a associação não forem necessárias, também é possível converter
 diretamente para um slice `[]any` ou um mapa não ordenado `map[string]any`.
@@ -189,88 +189,59 @@ diretamente para um slice `[]any` ou um mapa não ordenado `map[string]any`.
 **Criando e manipulando arrays em Go:**
 
 ```go
-//export_php:function process_data(array $input): array
-func process_data(arr *C.zval) unsafe.Pointer {
-    // Converte array PHP para Go
-    goArray := frankenphp.GoArray(unsafe.Pointer(arr))
-	
-	result := &frankenphp.Array{}
-    
-    result.SetInt(0, "primeiro")
-    result.SetInt(1, "segundo")
-    result.Append("terceiro") // Atribui automaticamente a próxima chave inteira
-    
-    result.SetString("nome", "John")
-    result.SetString("idade", int64(30))
-    
-    for i := uint32(0); i < goArray.Len(); i++ {
-        key, value := goArray.At(i)
-        if key.Type == frankenphp.PHPStringKey {
-            result.SetString("processou_"+key.Str, value)
-        } else {
-            result.SetInt(key.Int+100, value)
-        }
-    }
-    
-    // Converte de volta para array PHP
-    return frankenphp.PHPArray(result)
-}
-```
-
-```go
 //export_php:function process_data_ordered(array $input): array
 func process_data_ordered_map(arr *C.zval) unsafe.Pointer {
-	// Converte um array associativo PHP para Go, mantendo a ordem
-	associativeArray := frankenphp.GoAssociativeArray(unsafe.Pointer(arr))
+    // Converte um array associativo PHP para Go, mantendo a ordem
+    associativeArray := frankenphp.GoAssociativeArray(unsafe.Pointer(arr))
 
-	// percorre as entradas em ordem
-	for _, key := range associativeArray.Order {
-		value, _ = associativeArray.Map[key]
-		// faz algo com a chave e o valor
-	}
+    // percorre as entradas em ordem
+    for _, key := range associativeArray.Order {
+        value, _ = associativeArray.Map[key]
+        // faz algo com a chave e o valor
+    }
 
-	// retorna um array ordenado
-	// se 'Order' não estiver vazio, apenas os pares chave-valor em 'Order'
-	// serão respeitados
-	return frankenphp.PHPAssociativeArray(AssociativeArray{
-		Map: map[string]any{
-			"chave1": "valor1",
-			"chave2": "valor2",
-		},
-		Order: []string{"chave1", "chave2"},
-	})
+    // retorna um array ordenado
+    // se 'Order' não estiver vazio, apenas os pares chave-valor em 'Order'
+    // serão respeitados
+    return frankenphp.PHPAssociativeArray(AssociativeArray{
+        Map: map[string]any{
+            "chave1": "valor1",
+            "chave2": "valor2",
+        },
+        Order: []string{"chave1", "chave2"},
+    })
 }
 
 //export_php:function process_data_unordered(array $input): array
 func process_data_unordered_map(arr *C.zval) unsafe.Pointer {
-	// Converte um array associativo PHP em um mapa Go sem manter a ordem
-	// Ignorar a ordem terá melhor desempenho
-	goMap := frankenphp.GoMap(unsafe.Pointer(arr))
+    // Converte um array associativo PHP em um mapa Go sem manter a ordem
+    // Ignorar a ordem terá melhor desempenho
+    goMap := frankenphp.GoMap(unsafe.Pointer(arr))
 
-	// percorre as entradas sem nenhuma ordem específica
-	for key, value := range goMap {
-		// faz algo com a chave e o valor
-	}
+    // percorre as entradas sem nenhuma ordem específica
+    for key, value := range goMap {
+        // faz algo com a chave e o valor
+    }
 
-	// retorna um array não ordenado
-	return frankenphp.PHPMap(map[string]any{
-		"chave1": "valor1",
-		"chave2": "valor2",
-	})
+    // retorna um array não ordenado
+    return frankenphp.PHPMap(map[string]any{
+        "chave1": "valor1",
+        "chave2": "valor2",
+    })
 }
 
 //export_php:function process_data_packed(array $input): array
 func process_data_packed(arr *C.zval) unsafe.Pointer {
-	// Converte um array compactado PHP para Go
-	goSlice := frankenphp.GoPackedArray(unsafe.Pointer(arr), false)
+    // Converte um array compactado PHP para Go
+    goSlice := frankenphp.GoPackedArray(unsafe.Pointer(arr), false)
 
-	// percorre o slice em ordem
-	for index, value := range goSlice {
-		// faz algo com a chave e o valor
-	}
+    // percorre o slice em ordem
+    for index, value := range goSlice {
+        // faz algo com a chave e o valor
+    }
 
-	// retorna um array compactado
-	return frankenphp.PHPackedArray([]any{"valor1", "valor2", "value3"})
+    // retorna um array compactado
+    return frankenphp.PHPackedArray([]any{"valor1", "valor2", "value3"})
 }
 ```
 
@@ -295,7 +266,7 @@ func process_data_packed(arr *C.zval) unsafe.Pointer {
   \- Converte para um array PHP ordenado com pares chave-valor;
 - `frankenphp.PHPMap(arr map[string]any) unsafe.Pointer` - Converte um mapa em
   um array PHP não ordenado com pares chave-valor;
-- `frankenphp.PHPPackedArray(slice []any) unsafe.Pointer` - Converte uma fatia
+- `frankenphp.PHPPackedArray(slice []any) unsafe.Pointer` - Converte um slice
   em um array PHP compactado apenas com valores indexados;
 - `frankenphp.GoAssociativeArray(arr unsafe.Pointer, ordered bool) frankenphp.AssociativeArray`
   \- Converte um array PHP em um `AssociativeArray` Go ordenado (mapa com ordem);
@@ -433,11 +404,11 @@ $user = new User();
 $user->setAge(25);
 echo $user->getName();           // Saída: (vazio, valor padrão)
 echo $user->getAge();            // Saída: 25
-$user->setNamePrefix("Employee");
+$user->setNamePrefix("Funcionária");
 
 // ✅ Isso também funciona - parâmetros anuláveis
-$user->updateInfo("John", 30, true);        // Todos os parâmetros fornecidos
-$user->updateInfo("Jane", null, false);     // Age é nulo
+$user->updateInfo("João", 30, true);        // Todos os parâmetros fornecidos
+$user->updateInfo("Joana", null, false);     // Age é nulo
 $user->updateInfo(null, 25, null);          // Name e active são nulos
 
 // ❌ Isso NÃO funcionará - acesso direto à propriedade
@@ -516,7 +487,7 @@ echo Order::STATE_PENDING;   // 0
 ```
 
 A diretiva suporta vários tipos de valor, incluindo strings, inteiros,
-booleanos, floats e constantes iota.
+booleanos, floats e constantes `iota`.
 Ao usar `iota`, o gerador atribui automaticamente valores sequenciais (0, 1, 2,
 etc.).
 As constantes globais ficam disponíveis no seu código PHP como constantes
@@ -614,7 +585,7 @@ type UserStruct struct {
 
 //export_php:method User::getName(): string
 func (u *UserStruct) GetName() unsafe.Pointer {
-    return frankenphp.PHPString("John Doe", false)
+    return frankenphp.PHPString("João Ninguém", false)
 }
 
 //export_php:const
@@ -632,7 +603,7 @@ colocadas sob esse namespace no PHP:
 echo My\Extension\hello(); // "Olá do namespace My\Extension!"
 
 $user = new My\Extension\User();
-echo $user->getName(); // "John Doe"
+echo $user->getName(); // "João Ninguém"
 
 echo My\Extension\STATUS_ACTIVE; // 1
 ```

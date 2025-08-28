@@ -7,7 +7,7 @@
 
 source_url: https://github.com/php/frankenphp/blob/main/docs/extensions.md
 revision: d5407273692d6dc4c2737423ffad62f163e666c6
-status: review
+status: ready
 -->
 
 # Escrevendo extensões PHP em Go

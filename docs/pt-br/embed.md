@@ -7,7 +7,7 @@
 
 source_url: https://github.com/php/frankenphp/blob/main/docs/embed.md
 revision: ac900e0df433d6f05df11eefe1e2ba88fa6dac5e
-status: review
+status: ready
 -->
 
 # Aplicações PHP como binários independentes

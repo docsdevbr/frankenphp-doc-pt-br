@@ -68,7 +68,7 @@ frankenphp php-cli /caminho/para/seu/script.php
 
 ### Docker
 
-Alternativamente, [imagens do Docker](docker.md) estão disponíveis:
+Alternativamente, [imagens Docker](docker.md) estão disponíveis:
 
 ```console
 docker run -v .:/app/public \
@@ -122,7 +122,7 @@ frankenphp php-server
 - [Integração com Laravel](laravel.md)
 - [Problemas conhecidos](known-issues.md)
 - [Aplicação de demonstração (Symfony) e benchmarks](https://github.com/dunglas/frankenphp-demo)
-- [Documentação da biblioteca Go](https://pkg.go.dev/github.com/dunglas/frankenphp)
+- [Documentação da biblioteca Go](https://pkg.go.dev/github.com/php/frankenphp)
 - [Contribuindo e depurando](CONTRIBUTING.md)
 
 ## Exemplos e esqueletos

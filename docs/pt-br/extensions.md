@@ -143,17 +143,20 @@ pois requer a compreensão dos componentes internos da Zend Engine e de como as
 variáveis são armazenadas internamente no PHP.
 Esta tabela resume o que você precisa saber:
 
-| Tipo PHP           | Tipo Go             | Conversão direta | Auxiliar de C para Go    | Auxiliar de Go para C    | Suporte a métodos de classe |
-|--------------------|---------------------|------------------|--------------------------|--------------------------|-----------------------------|
-| `int`              | `int64`             | ✅                | -                        | -                        | ✅                           |
-| `?int`             | `*int64`            | ✅                | -                        | -                        | ✅                           |
-| `float`            | `float64`           | ✅                | -                        | -                        | ✅                           |
-| `?float`           | `*float64`          | ✅                | -                        | -                        | ✅                           |
-| `bool`             | `bool`              | ✅                | -                        | -                        | ✅                           |
-| `?bool`            | `*bool`             | ✅                | -                        | -                        | ✅                           |
-| `string`/`?string` | `*C.zend_string`    | ❌                | frankenphp.GoString()    | frankenphp.PHPString()   | ✅                           |
-| `array`            | `*frankenphp.Array` | ❌                | frankenphp.GoArray()     | frankenphp.PHPArray()    | ✅                           |
-| `object`           | `struct`            | ❌                | _Ainda não implementado_ | _Ainda não implementado_ | ❌                           |
+| Tipo PHP           | Tipo Go                       | Conversão direta | Auxiliar de C para Go             | Auxiliar de Go para C              | Suporte a métodos de classe |
+|--------------------|-------------------------------|------------------|-----------------------------------|------------------------------------|-----------------------------|
+| `int`              | `int64`                       | ✅                | -                                 | -                                  | ✅                           |
+| `?int`             | `*int64`                      | ✅                | -                                 | -                                  | ✅                           |
+| `float`            | `float64`                     | ✅                | -                                 | -                                  | ✅                           |
+| `?float`           | `*float64`                    | ✅                | -                                 | -                                  | ✅                           |
+| `bool`             | `bool`                        | ✅                | -                                 | -                                  | ✅                           |
+| `?bool`            | `*bool`                       | ✅                | -                                 | -                                  | ✅                           |
+| `?bool`            | `*bool`                       | ✅                | -                                 | -                                  | ✅                           |
+| `string`/`?string` | `*C.zend_string`              | ❌                | `frankenphp.GoString()`           | `frankenphp.PHPString()`           | ✅                           |
+| `array`            | `frankenphp.AssociativeArray` | ❌                | `frankenphp.GoAssociativeArray()` | `frankenphp.PHPAssociativeArray()` | ✅                           |
+| `array`            | `map[string]any`              | ❌                | `frankenphp.GoMap()`              | `frankenphp.PHPMap()`              | ✅                           |
+| `array`            | `[]any`                       | ❌                | `frankenphp.GoPackedArray()`      | `frankenphp.PHPPackedArray()`      | ✅                           |
+| `object`           | `struct`                      | ❌                | _Ainda não implementado_          | _Ainda não implementado_           | ❌                           |
 
 > [!NOTE]
 > Esta tabela ainda não é exaustiva e será completada à medida que a API de
@@ -172,10 +175,16 @@ para C e Go.
 
 #### Trabalhando com arrays
 
-O FrankenPHP fornece suporte nativo para arrays PHP por meio do tipo
-`frankenphp.Array`.
-Este tipo representa arrays indexados (listas) e arrays associativos (hashmaps)
-do PHP com pares chave-valor ordenados.
+O FrankenPHP oferece suporte nativo para arrays PHP por meio de
+`frankenphp.AssociativeArray` ou conversão direta para um mapa ou slice.
+
+`AssociativeArray` representa um
+[hashmap](https://en.wikipedia.org/wiki/Hash_table) composto por um campo
+`Map: map[string]any` e um campo opcional `Order: []string` (ao contrário dos
+"arrays associativos" do PHP, os mapas em Go não são ordenados).
+
+Se a ordem ou a associação não forem necessárias, também é possível converter
+diretamente para um slice `[]any` ou um mapa não ordenado `map[string]any`.
 
 **Criando e manipulando arrays em Go:**
 
@@ -208,28 +217,92 @@ func process_data(arr *C.zval) unsafe.Pointer {
 }
 ```
 
-**Principais recursos de `frankenphp.Array`:**
+```go
+//export_php:function process_data_ordered(array $input): array
+func process_data_ordered_map(arr *C.zval) unsafe.Pointer {
+	// Converte um array associativo PHP para Go, mantendo a ordem
+	associativeArray := frankenphp.GoAssociativeArray(unsafe.Pointer(arr))
 
-- **Pares chave-valor ordenados** - Mantém a ordem de inserção como arrays PHP;
-- **Tipos de chave mistos** - Suporta chaves inteiras e strings no mesmo array;
-- **Segurança de tipo** - O tipo `PHPKey` garante o manuseio adequado das
-  chaves;
+	// percorre as entradas em ordem
+	for _, key := range associativeArray.Order {
+		value, _ = associativeArray.Map[key]
+		// faz algo com a chave e o valor
+	}
+
+	// retorna um array ordenado
+	// se 'Order' não estiver vazio, apenas os pares chave-valor em 'Order'
+	// serão respeitados
+	return frankenphp.PHPAssociativeArray(AssociativeArray{
+		Map: map[string]any{
+			"chave1": "valor1",
+			"chave2": "valor2",
+		},
+		Order: []string{"chave1", "chave2"},
+	})
+}
+
+//export_php:function process_data_unordered(array $input): array
+func process_data_unordered_map(arr *C.zval) unsafe.Pointer {
+	// Converte um array associativo PHP em um mapa Go sem manter a ordem
+	// Ignorar a ordem terá melhor desempenho
+	goMap := frankenphp.GoMap(unsafe.Pointer(arr))
+
+	// percorre as entradas sem nenhuma ordem específica
+	for key, value := range goMap {
+		// faz algo com a chave e o valor
+	}
+
+	// retorna um array não ordenado
+	return frankenphp.PHPMap(map[string]any{
+		"chave1": "valor1",
+		"chave2": "valor2",
+	})
+}
+
+//export_php:function process_data_packed(array $input): array
+func process_data_packed(arr *C.zval) unsafe.Pointer {
+	// Converte um array compactado PHP para Go
+	goSlice := frankenphp.GoPackedArray(unsafe.Pointer(arr), false)
+
+	// percorre o slice em ordem
+	for index, value := range goSlice {
+		// faz algo com a chave e o valor
+	}
+
+	// retorna um array compactado
+	return frankenphp.PHPackedArray([]any{"valor1", "valor2", "value3"})
+}
+```
+
+**Principais recursos da conversão de arrays:**
+
+- **Pares chave-valor ordenados** - Opção para manter a ordem do array
+  associativo;
+- **Otimizado para múltiplos casos** - Opção para ignorar a ordem para melhor
+  desempenho ou converter diretamente para um slice;
 - **Detecção automática de listas** - Ao converter para PHP, detecta
   automaticamente se o array deve ser uma lista compactada ou um hashmap;
+- **Arrays aninhados** - Os arrays podem ser aninhados e converterão todos os
+  tipos suportados automaticamente (`int64`, `float64`, `string`, `bool`, `nil`,
+  `AssociativeArray`, `map[string]any`, `[]any`);
 - **Objetos não são suportados** - Atualmente, apenas tipos escalares e arrays
   podem ser usados como valores.
   Fornecer um objeto resultará em um valor `null` no array PHP.
 
-**Métodos disponíveis:**
+##### Métodos disponíveis: empacotado e associativo
 
-- `SetInt(key int64, value interface{})` - Define o valor com chave inteira;
-- `SetString(key string, value interface{})` - Define o valor com chave string;
-- `Append(value interface{})` - Adiciona o valor com a próxima chave inteira
-  disponível;
-- `Len() uint32` - Obtém o número de elementos;
-- `At(index uint32) (PHPKey, interface{})` - Obtém o par chave-valor no índice;
-- `frankenphp.PHPArray(arr *frankenphp.Array) unsafe.Pointer` - Converte para
-  array PHP.
+- `frankenphp.PHPAssociativeArray(arr frankenphp.AssociativeArray) unsafe.Pointer`
+  \- Converte para um array PHP ordenado com pares chave-valor;
+- `frankenphp.PHPMap(arr map[string]any) unsafe.Pointer` - Converte um mapa em
+  um array PHP não ordenado com pares chave-valor;
+- `frankenphp.PHPPackedArray(slice []any) unsafe.Pointer` - Converte uma fatia
+  em um array PHP compactado apenas com valores indexados;
+- `frankenphp.GoAssociativeArray(arr unsafe.Pointer, ordered bool) frankenphp.AssociativeArray`
+  \- Converte um array PHP em um `AssociativeArray` Go ordenado (mapa com ordem);
+- `frankenphp.GoMap(arr unsafe.Pointer) map[string]any` - Converte um array PHP
+  em um mapa Go não ordenado;
+- `frankenphp.GoPackedArray(arr unsafe.Pointer) []any` - Converte um array PHP
+  em um slice Go.
 
 ### Declarando uma classe PHP nativa
 

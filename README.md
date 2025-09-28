@@ -52,7 +52,7 @@ A obra original foi traduzida do inglês para o português brasileiro.
 
 [license]: LICENSE
 
-[page]: https://pt.docs.dev.br/p/frankenphp/
+[page]: https://pt.docs.dev.br/p/frankenphp/docs/
 
 [readme-en]: README.EN.md
 

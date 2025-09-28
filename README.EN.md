@@ -52,7 +52,7 @@ The original work was translated from English into Brazilian Portuguese.
 
 [license]: LICENSE
 
-[page]: https://pt.docs.dev.br/p/frankenphp/
+[page]: https://pt.docs.dev.br/p/frankenphp/docs/
 
 [readme-en]: README.EN.md
 
